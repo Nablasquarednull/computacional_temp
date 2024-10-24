@@ -3,7 +3,7 @@ from numpy import log, empty,sort,flip,arange
 from random import random
 from matplotlib.pyplot import plot,show
 #-----------------------------------------#
-#theoretical equation of decau
+#theoretical equation of decay
 tmax = 1000
 dt = 1
 time = arange(0,tmax,dt)
