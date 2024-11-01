@@ -1,5 +1,7 @@
-# Ideal gas simulation using the Metropolis algorithm
-# We want to determine the total energy of the gas
+#Ising array simulation
+# Emilio pacheco cuan
+#Ricardo rodriguez Pineda
+#Andrés Alvarez rodriguez
 from os import system
 from time import sleep
 from random import random, randrange
@@ -11,7 +13,7 @@ beta = 1
 steps = 1000
 magnetization = []
 #------------------------------------
-def random_markov(n):
+def random_markov(n): #crea un arreglo n x n 2-dimensional de spines con orientación aleatoria
     M = ones([n,n],int)
     for i in range(n):
         for j in range(n):
@@ -20,7 +22,7 @@ def random_markov(n):
                 M[i,j] = -1
     return M
 #----------------------------------
-def energy_cal(markov_chain):
+def energy_cal(markov_chain): #calcula el nivel de energía para un arreglo "markov_chain"
     dim = markov_chain.shape
     interaction_mat1 = zeros((dim[0],dim[1]-1),int)
     interaction_mat2 = zeros((dim[0]-1,dim[1]),int)
@@ -41,10 +43,14 @@ def energy_cal(markov_chain):
 #-----------------------------------
 def magnetization_cal(markov_chain):
     magnetization = np.sum(markov_chain)
+    return magnetization
 #----------------------------------
 def markov_evolution(markov_chain):
-    i = randrange(N)
-    j = randrange(N)
+    dim = markov_chain.shape
+    row = dim[0]
+    col = dim[1]
+    i = randrange(row)
+    j = randrange(col)
     markov_chain_copy = copy(markov_chain)
     spin = markov_chain_copy[i,j]
     if spin == 1:
@@ -52,17 +58,26 @@ def markov_evolution(markov_chain):
     else:
         spin == 1
     E = energy_cal(markov_chain_copy)
-    if random() < exp(-beta*E): #we accept the chain
+    if random() < exp(-beta * E): #we accept the chain and return the new chain
         return markov_chain_copy
     else:
-        return markov_chain #we reject the change
+        return markov_chain #we reject the change and return the original chain
 #------------------------------------    
 def main_for_linux():
+    markov_chain = random_markov(3)
     for i in range(steps):
+        sleep(0.05)
         system('clear')
-        markov_chain = random_markov(20)
         print(markov_chain)
         magnetization.append(magnetization_cal(markov_chain))
+        markov_chain = markov_evolution(markov_chain)
+    print(magnetization)
+    plot(magnetization)
+    show()
+main_for_linux()
+#markov = random_markov(3)
+#print(energy_cal(markov))
+#print(magnetization_cal(markov))
 
 
 
