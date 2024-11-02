@@ -45,7 +45,7 @@ def magnetization_cal(markov_chain):
     magnetization = np.sum(markov_chain)
     return magnetization
 #----------------------------------
-def markov_evolution(markov_chain):
+"""def markov_evolution(markov_chain):
     dim = markov_chain.shape
     row = dim[0]
     col = dim[1]
@@ -55,30 +55,66 @@ def markov_evolution(markov_chain):
     spin = markov_chain_copy[i,j]
     if spin == 1:
         spin = -1
-    else:
+    elif spin == -1:
         spin == 1
     E = energy_cal(markov_chain_copy)
     if random() < exp(-beta * E): #we accept the chain and return the new chain
         return markov_chain_copy
     else:
-        return markov_chain #we reject the change and return the original chain
+        return markov_chain #we reject the change and return the original chain"""
+#------------------------------------
+def markov_evolution(markov_chain):
+    dim = markov_chain.shape
+    row = dim[0]
+    col = dim[1]
+    i = randrange(row)
+    j = randrange(col)
+    spin = markov_chain[i,j]
+    
+    # Calculate the energy difference due to the spin flip
+    delta_E = 2 * spin * (markov_chain[(i+1)%row, j] + markov_chain[(i-1)%row, j] + 
+                           markov_chain[i, (j+1)%col] + markov_chain[i, (j-1)%col])
+
+    if random() < np.exp(-beta * delta_E):  # Accept the spin flip
+        markov_chain[i, j] *= -1
+    
+    return markov_chain
 #------------------------------------    
-def main_for_linux():
-    markov_chain = random_markov(3)
+def main_for_windows():
+    markov_chain = random_markov(20)
     for i in range(steps):
-        sleep(0.05)
-        system('clear')
-        print(markov_chain)
         magnetization.append(magnetization_cal(markov_chain))
         markov_chain = markov_evolution(markov_chain)
-    print(magnetization)
     plot(magnetization)
     show()
-main_for_linux()
-#markov = random_markov(3)
-#print(energy_cal(markov))
-#print(magnetization_cal(markov))
+#------------------------------------
+def main_for_linux():
+    markov_chain = random_markov(20)
 
+    for i in range(steps):
+        # Move the cursor to the top-left corner
+        print("\033[H\033[J")
+
+        # Print the updated matrix with aligned columns
+        for row in markov_chain:
+            for spin in row:
+                print(f"{spin:2d}", end=" ")  # Print each spin with a fixed width of 2 characters
+            print()  # Move to the next line
+
+        # Update the magnetization
+        magnetization.append(magnetization_cal(markov_chain))
+
+        # Evolve the Markov chain
+        markov_chain = markov_evolution(markov_chain)
+
+        # Introduce a delay to control the update rate
+        sleep(0.01)
+
+    # Print the final magnetization plot
+    plot(magnetization)
+    show()
+#main_for_windows()
+main_for_linux()
 
 
 
