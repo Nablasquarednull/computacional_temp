@@ -101,3 +101,9 @@ while t < 20:
     s_array[0,i] *= (-1)
     t += 1
 imshow(reshape(s_array,(N,N)))
+
+
+
+
+
+
