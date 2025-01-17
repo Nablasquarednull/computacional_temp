@@ -1,9 +1,8 @@
 #Paola blumenkron guerrero
 #Andrés Alvarez Rodriguez
-from numpy import cos, sin, sqrt, radians
+from numpy import cos, sin, sqrt, radians, linspace, arange
 import matplotlib.pyplot as plt
-#Algorithm: set up initial constraints (x_0,Y_o) and (V_x0,V_y0)
-            #For loop for each t_i value
+#Algorithm: set up initial constraints (x_0,Y_o) and (V_x0,V_y0), loop for each t_i value
 #Task 1: Implement the algorithm with air resistance (and without) and plot
      # on the same graph
      #Initial Constraints: initial position: (0,0), V_0 = 700 m/s, theta = 45º
@@ -77,4 +76,55 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#TASK 2: 
+#TASK 2: implement verlets algorith to produce a y-t plot and a E-t plot.
+#---INITIAL CONSTRAINTS---
+omega = 1
+mass = 1
+V_0  = 0 # m/s
+y_0 = 0.2
+t_0 = 0
+t_final = 100
+delta_t = 0.01 # s (sugerida por la Dra. milagros)
+y_1 = y_0 + V_0 * delta_t
+steps = int
+
+#------arrays to store energy,position, and time--------
+energy_array = []
+y_array = []
+v_array = []
+t_array = arange(t_0,t_final,delta_t)
+#---------------------------------------------------
+y_array.append(y_0)
+y_array.append(y_1)
+v_array.append(0)
+#--------------------------------------------------
+def verlet_method(y_0,y_1,delta_t,omega,mass,v):
+    y_2  = 2 * y_1 - y_0 - omega**2 * y_1 * delta_t**2
+    v_1 = (y_2 - y_0)/(2*delta_t)
+    return y_2,v_1
+
+def energy_calc(v,omega,y):
+    return (1/2) * v**2 + (1/2) * omega**2 * y**2
+for i in range(1,len(t_array)):
+    y_n,v_m = verlet_method(y_array[i-1],y_array[i],delta_t,omega,mass,v_array[i-1])
+    v_array.append(v_m)
+    y_array.append(y_n)
+del y_array[-1]
+plt.plot(t_array, y_array,color = 'purple')
+plt.xlabel("Time (s)")
+plt.ylabel("position (m)")
+plt.title("Unidimiensional position of harmonic oscillator")
+plt.grid()
+plt.show()
+for i in range(len(v_array)):
+    energy_array.append(energy_calc(v_array[i],omega,y_array[i]))
+plt.plot(t_array, energy_array)
+plt.xlabel("Time (s)")
+plt.ylabel("Energy (en no se qué unidades)")
+plt.title("Energy of the harmonic oscillator")
+plt.grid()
+plt.show()
+print(energy_array[0:10])
+
+
+
